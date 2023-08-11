@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-demo
+#  annotations:
+#    reloader.stakater.com/auto: "true"
+  labels:
+    app: devops-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devops-demo
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: devops-demo
+    spec:
+      containers:
+        - name: devops-demo
+          image: zhangbaorui/devops-project-demo:1.0.0
+          volumeMounts:
+            - name: devops-demo-config-volume
+              mountPath: ./config
+#              subPath: application.properties
+#              mountPath: /opt/config
+            - name: devops-demo-secret-volume
+              mountPath: /opt/secret
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DEVOPS_API_TWO
+              valueFrom:
+                configMapKeyRef:
+                  name: devops-demo-configmap
+                  key: 'devops.api.two'
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 10
+            failureThreshold: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 2
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+      volumes:
+        - name: devops-demo-config-volume
+          configMap:
+            name: devops-demo-configmap
+        - name: devops-demo-secret-volume
+          secret:
+            secretName: devops-demo-secrets
+      restartPolicy: Always

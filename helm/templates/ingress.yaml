@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    kubernetes.io/ingress.class: kong
+spec:
+  rules:
+    - host: {{ .Values.controller.hostname }}
+      http:
+        paths:
+          {{- if .Values.docsify.enabled }}
+          - path: /docs
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}
+                port:
+                  number: 8080
+          {{- end }}
+
+          {{ $ := . }} # alias root context
+          {{- range .Values.controller.paths }}
+          - path: {{ . | quote }}
+            pathType: Prefix
+            backend:
+              service:
+                # use alias root context
+                name: {{ $.Release.Name }}
+                port:
+                  number: 8080
+          {{- end }}

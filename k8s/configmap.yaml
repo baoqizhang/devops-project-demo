@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: devops-demo-configmap
+  labels:
+    spring.cloud.kubernetes.config: "true"
+data:
+  devops.api.two: 'test two success.'
+  application.yaml: |
+    test: 11111

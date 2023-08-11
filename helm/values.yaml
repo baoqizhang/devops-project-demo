@@ -1,0 +1,23 @@
+docsify:
+  enabled: true
+
+controller:
+  paths:
+    - /api
+    - /swagger-resources
+  hostname: baorui.demo.com
+
+image:
+  tag: latest
+  registry: zhangbaorui
+
+autoscaling:
+  minReplicas: 1
+  maxReplicas: 2
+
+request:
+  cpu: 500m
+  memory: 1Gi
+limit:
+  cpu: 3
+  memory: 3Gi

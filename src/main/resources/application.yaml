@@ -1,0 +1,7 @@
+devops:
+  api:
+    one: "test 1"
+    two: ${DEVOPS_API_TWO:"test 2"}
+  mount: "mount value"
+
+test: "test1"

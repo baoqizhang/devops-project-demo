@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: devops-demo
+  cloud:
+    kubernetes:
+      reload:
+        enabled: true
+        monitoring-secrets: true
+        monitoring-config-maps: true
+        mode: polling
+        strategy: refresh
+        period: 500
+      config:
+        sources:
+          - name: ${spring.application.name}-configmap
+      secrets:
+        sources:
+          - name: ${spring.application.name}-secrets
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,health
+  endpoint:
+    restart:
+      enabled: true
+    health:
+      enabled: true
+    info:
+      enabled: true
+
